@@ -1,0 +1,52 @@
+<!-- {{ define "home"}} -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../static/js/script.js" defer></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <title class="d-none">Document</title>
+</head>
+<body>
+
+    <div class="d-flex ">
+        <div class="col-3 py-5">
+            <h3>Use presets</h3>
+            <ol>
+                <li><button onclick="fillForm('ilyas')" >Ilyas, Junior Golang Developer</button></li>
+                <li><button onclick="fillForm('eldana')" > onclick="fillForm('eldana')">Eldana, Middle iOS Developer</li>
+            </ol>
+        </div>
+        
+        <div class="col-9">
+            <h1 class="text-center">AI Interview Chat</h1>
+            <br>
+            <div id="main">
+                <div class="intro">
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Enter name...">
+                    <input type="text" name="YearsOfCommercialExperience" id="YearsOfCommercialExperience" class="form-control" placeholder="Enter years of commercial experience...">
+                    <input type="text" name="CurrentPosition" id="CurrentPosition" class="form-control" placeholder="Enter current position...">
+                    <input type="text" name="DesiredPosition" id="DesiredPosition" class="form-control" placeholder="Enter desired position...">
+                    <textarea name="stack" id="stack" cols="30" class="form-control" rows="10" placeholder="Describe stack..."></textarea>
+                    <button onclick="toggleChat()" class="btn">Start Interview</button>
+                </div>
+                <div class="chat thin">
+                    <div class="card">
+                        <div id="messages" class="card-block"></div>
+                    </div>
+                    <br>
+                    <textarea id="textarea" name="inputMessage" class="form-control" placeholder="Enter message..."></textarea>
+                    <br>
+                    <button id="send" class="btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</body>
+</html>
+<!-- {{ end }} -->

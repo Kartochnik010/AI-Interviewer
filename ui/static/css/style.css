@@ -1,0 +1,22 @@
+* {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+script {
+  display: none;
+}
+
+body {
+    background-color: beige;
+}
+
+#messages{
+  height:300px;
+  overflow-y: scroll;
+}
+
+.thin {
+  opacity: 0;
+}
