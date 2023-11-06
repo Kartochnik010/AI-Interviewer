@@ -11,6 +11,13 @@ import (
 	"os"
 )
 
+func main() {
+	err := serve()
+	if err != nil {
+		logINFO.Fatalln(err, nil)
+	}
+}
+
 const (
 	port = "8080"
 )
@@ -24,38 +31,9 @@ const (
 )
 
 var (
-	name                        = "Ильяс"
-	YearsOfCommercialExperience = 1
-	CurrentPosition             = "Junior"
-	DesiredPosition             = "Middle"
-	AmountOfQuestions           = 1
-	messsageContent             = "I want you to act as an interviewer. I will be the candidate and you will ask me coding interview questions for a Junior Software Engineer position. I want you to only reply as the interviewer. Do not write all the conversation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers. Ask me random questions from one of the following topics and ask follow-up questions: Data Structure, Algorithm, Operating System, System Design, Network and Security"
-
-	// messsageContent = fmt.Sprintf("I want you to act as a career consultant. "+
-	// 	"My name is %s. "+
-	// 	"My current position is %s with %v year of experience. "+
-	// 	"I want to grow from %s level and you will as me questions as for %s"+
-	// 	"I want you to ask me questions one at a time, wait for an answer and only then ask the next question. "+
-	// 	"Count every question and once you will recieve answers for %v questions give your assessment and recommendation! "+
-	// 	"I warn you, you will continue the dialoge with the client. "+
-	// 	"Start the interview with "+
-	// 	"'Привет, %s. Ты бы хотел подняться с уровня %s до %s, верно?'"+
-	// 	"Strictly ask only one question at a time!"+
-	// 	"answer in russian",
-	// 	name, CurrentPosition, YearsOfCommercialExperience, DesiredPosition, DesiredPosition, AmountOfQuestions, name, CurrentPosition, DesiredPosition,
-	// )
-
 	logINFO  = logpkg.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
 	logERROR = logpkg.New(os.Stdout, "ERROR ", log.Ldate|log.Ltime|log.Lshortfile)
 )
-
-func main() {
-
-	err := serve()
-	if err != nil {
-		logINFO.Fatalln(err, nil)
-	}
-}
 
 func GetRequestBodyString(model string, msg string) (string, error) {
 	switch model {
@@ -72,7 +50,6 @@ func GetRequestBodyString(model string, msg string) (string, error) {
 			"stop": "\n"
 	  	}`, msg), nil
 
-		//   {"role": "system", "content": "You are a technical interviewer. you will ask me coding interview questions for a Junior Software Engineer position."},
 	case "gpt-3.5-turbo":
 		return fmt.Sprintf(`{
 			"model": "gpt-3.5-turbo",

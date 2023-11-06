@@ -1,6 +1,6 @@
 const input = document.querySelector('#textarea')
 const messages = document.querySelector('#messages')
-const sendBtn = document.querySelector('#send')
+const send = document.querySelector('#send')
 
 const username = document.querySelector('#username')
 const YearsOfCommercialExperience = document.querySelector('#YearsOfCommercialExperience')
@@ -13,17 +13,15 @@ const ws = new WebSocket(url);
 
 
 
-send.onclick = () => {
-    const message = {
-		name: username.value,
-        YearsOfCommercialExperience: YearsOfCommercialExperience.value,
-        CurrentPosition: CurrentPosition.value,
-		content: input.value,
+const sendChat = () => {
+    const userdata = {
+		username: document.querySelector('#username').value,
+		content: document.querySelector('#textarea').value,
 	}
-    console.log(message);
-    ws.send(JSON.stringify(message));
-    input.value = "";
-};
+    console.log("sent: "+ userdata.username, userdata.content)
+    ws.send("chat," + userdata.username+ ","+ userdata.content);
+    document.querySelector('#textarea').value = "";
+}
 
 
 
@@ -31,7 +29,8 @@ send.onclick = () => {
  * Insert a message into the UI
  * @param {Message that will be displayed in the UI} messageObj
  */
-function insertMessage(messageObj) {
+function insertMessage(input) {
+    const messageObj = JSON.parse(input)
 	// Create a div object which will hold the message
 	const message = document.createElement('div')
 
@@ -41,39 +40,78 @@ function insertMessage(messageObj) {
 	message.textContent = `${messageObj.username}: ${messageObj.content}`
 
 	// Append the message to our chat div
-	messages.appendChild(message)
+	document.querySelector('#messages').appendChild(message)
 
 	// Insert the message as the first message of our chat
-	messages.insertBefore(message, messages.firstChild)
+	document.querySelector('#messages').insertBefore(message, messages.firstChild)
 }
 
-const fillForm = (name) => {
-    if (name === 'ilyas') {
-        username.value = 'Ilyas'
-        YearsOfCommercialExperience.value = '1'
-        CurrentPosition.value = 'Junior'
-        DesiredPosition.value = 'Strong Junior'
-        stack.value = 'Golang'
-    }
-    if (name === 'eldana') {
-        username.value = 'Eldana'
-        YearsOfCommercialExperience.value = '3'
-        CurrentPosition.value = 'Middle'
-        DesiredPosition.value = 'Senior'
-        stack.value = 'iOS'
-    }
-}
-// ws.onmessage = function (msg) {
-//     insertMessage(JSON.parse(msg.data))
-// };
+
+ws.onmessage = function (msg) {
+    console.log("Got:"+msg.data);
+    insertMessage(msg.data)
+};
 
 
-const toggleChat = () => {
+const start = () => {
+    let userdata = {
+        username: document.querySelector('#username').value,
+        YearsOfCommercialExperience: document.querySelector('#YearsOfCommercialExperience').value,
+        CurrentPosition: document.querySelector('#CurrentPosition').value,
+        DesiredPosition: document.querySelector('#DesiredPosition').value,
+        stack: document.querySelector('#stack').value
+    }
+
+    let errValidateMsg = "Please, enter valid "
+    let arrValidate = []
+
+    if (userdata.username == "") {
+        arrValidate.push("name")
+    }
+    if (userdata.YearsOfCommercialExperience == "") {
+        arrValidate.push("years of commercial experience")
+    }
+    if (userdata.CurrentPosition == "") {
+        arrValidate.push("current position")
+    }
+    if (userdata.stack == "") {
+        arrValidate.push("background experience")
+    }
+    if (userdata.DesiredPosition == "") {
+        arrValidate.push("desired position")
+    }
+    if (arrValidate.length > 0) {
+        errValidateMsg += arrValidate.join(", ")
+        alert(errValidateMsg)
+        return
+    }
+    console.log("starting chat for", userdata);
     const intro = document.querySelector('.intro')
     intro.classList.toggle("thin")
     
     const chat = document.querySelector('.chat')
     chat.classList.toggle("thin")
+
+    document.querySelectorAll(".filler").forEach(e => {e.classList.toggle("thin")})
+
+    
+    ws.send(userdata.username + "," + userdata.YearsOfCommercialExperience + "," + userdata.CurrentPosition + "," + userdata.DesiredPosition + "," + userdata.stack  )
 }
 
 document.querySelector("body").innerHTML+= "<hr>js loaded";
+const fillForm = (name) => {
+    if (name == 'ilyas') {
+        document.querySelector('#username').value = 'Mavlodi'
+        document.querySelector('#YearsOfCommercialExperience').value = '1'
+        document.querySelector('#CurrentPosition').value = 'Junior'
+        document.querySelector('#DesiredPosition').value = 'Strong Junior'
+        document.querySelector('#stack').value = 'Golang'
+    }
+    if (name == 'eldana') {
+        document.querySelector('#username').value = 'Karen'
+        document.querySelector('#YearsOfCommercialExperience').value = '3'
+        document.querySelector('#CurrentPosition').value = 'Middle'
+        document.querySelector('#DesiredPosition').value = 'Senior'
+        document.querySelector('#stack').value = 'iOS'
+    }
+}

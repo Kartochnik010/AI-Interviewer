@@ -4,9 +4,22 @@ import (
 	"fmt"
 	"kolesagpt/ui"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/olahol/melody.v1"
+)
+
+type Userdata struct {
+	username                    string
+	YearsOfCommercialExperience string
+	CurrentPosition             string
+	DesiredPosition             string
+	stack                       string
+}
+
+var (
+	userdata = &Userdata{}
 )
 
 func routes() http.Handler {
@@ -23,11 +36,27 @@ func routes() http.Handler {
 	r.HandlerFunc(http.MethodGet, "/", HTML("home"))
 	r.HandlerFunc(http.MethodGet, "/ws", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		m.HandleRequest(w, r)
-
 	}))
+	m.HandleClose(func(s *melody.Session, i int, ss string) error {
+		logINFO.Println("Closing chat with:", userdata.username)
+		return s.Close()
+	})
 	m.HandleMessage(func(s *melody.Session, msg []byte) {
-		m.Broadcast(msg)
+		m := string(msg)
+		wsdata := strings.Split(m, ",")
+		switch wsdata[0] {
+		case "chat":
 
+		case "start":
+			userdata.username = wsdata[0]
+			userdata.YearsOfCommercialExperience = wsdata[1]
+			userdata.CurrentPosition = wsdata[2]
+			userdata.DesiredPosition = wsdata[3]
+			userdata.stack = wsdata[4]
+			logINFO.Println("got:", userdata)
+			// s.Write([]byte(userdata.username))
+			startChat(userdata, s)
+		}
 	})
 
 	return enableCORS(r)

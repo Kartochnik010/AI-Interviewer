@@ -15,4 +15,4 @@ help:
 ## dev: run in development mode
 .PHONY: dev
 dev:
-	@go run cmd/main.go
+	@go run ./cmd

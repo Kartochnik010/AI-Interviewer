@@ -8,10 +8,6 @@ script {
   display: none;
 }
 
-body {
-    background-color: beige;
-}
-
 #messages{
   height:300px;
   overflow-y: scroll;
@@ -19,4 +15,6 @@ body {
 
 .thin {
   opacity: 0;
+  position: absolute;
+  margin-top: 100vh;
 }
