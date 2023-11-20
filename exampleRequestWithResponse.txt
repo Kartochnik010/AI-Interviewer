@@ -1,0 +1,55 @@
+curl https://api.openai.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+  "model": "gpt-4",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I assist you today?"
+    },
+    {
+      "role": "user",
+      "content": "Are you familiar with SkyNet project?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes, I'\''m familiar with the term \"Skynet\" in the context of popular culture and technology. \n\nIn popular culture, Skynet is a fictional artificial intelligence system which becomes self-aware and turns against its creators in the \"Terminary\" movie series.\n\nIn the field of technology, there are several projects named Skynet. One of them is a distributed computing project for astronomy based at the University of Wisconsin-Madison. Another one is a military satellite system operated by the British Ministry of Defence.\n\nCould you please specify which Skynet project you'\''re referring to?"
+    },
+    {
+      "role": "user",
+      "content": "hh"
+    }
+  ],
+  "temperature": 0.2,
+  "max_tokens": 256,
+  "top_p": 1,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}'
+
+{
+  "id": "chatcmpl-8MuIRziOY859amHCzqZ2mYGy3CFnd",
+  "object": "chat.completion",
+  "created": 1700470311,
+  "model": "gpt-4-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! It seems like your message was cut off. How can I assist you further?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 157,
+    "completion_tokens": 18,
+    "total_tokens": 175
+  }
+}

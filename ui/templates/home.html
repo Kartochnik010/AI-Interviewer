@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head class="d-none">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
         integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="../static/css/style.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <title class="d-none">Document</title>
+    <title>Document</title>
 </head>
 
 <body>
@@ -35,7 +36,8 @@
                     <input type="text" value="" name="CurrentPosition" id="CurrentPosition" class="form-control" placeholder="Enter current position...">
                     <input type="text" value="" name="DesiredPosition" id="DesiredPosition" class="form-control" placeholder="Enter desired position...">
                     <textarea name="stack" id="stack" cols="30" class="form-control" rows="10" placeholder="Describe stack..."></textarea>
-                    <button onclick="start()" class="btn">Start Interview</button>
+                    <button onclick="startInterview()" class="btn">Technical Interview</button>
+                    <button onclick="startRoadmap()" class="btn">Generate a detailed roadmap</button>
                 </div>
                 <div class="chat thin">
                     <div class="card">

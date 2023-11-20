@@ -4,11 +4,12 @@ import "database/sql"
 
 type Models struct {
 	Users UserModel
+	Gpt   GptModel
 }
 
 func NewModels(db *sql.DB) *Models {
 	return &Models{
 		Users: UserModel{DB: db},
-		// other models
+		Gpt:   GptModel{DB: db},
 	}
 }

@@ -11,22 +11,24 @@ import (
 // - можно добавить ещё показателей, которые мы можем получить из хранимых данных.
 
 type User struct {
-	ID              int
-	Name            string
-	TechStack       []string
-	CurrentPosition Position
-	GoalPosition    Position
-	About           string
-	CreatedAt       string
+	Username                    string
+	YearsOfCommercialExperience string
+	CurrentPosition             string
+	DesiredPosition             string
+	Stack                       string
+	Messages                    []Message
 }
-type Position string
+type UserResponse struct {
+	Username string
+	Content  string
+}
 
 type UserModel struct {
 	DB *sql.DB
 }
 
 func (u *UserModel) Insert(user User) error {
-	log.Printf("Insert " + user.Name)
+	log.Printf("Insert " + user.Username)
 	return nil
 }
 

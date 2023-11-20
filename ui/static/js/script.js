@@ -11,6 +11,9 @@ const stack = document.querySelector('#stack')
 const url = "ws://" + window.location.host + "/ws";
 const ws = new WebSocket(url);
 
+var converter = new showdown.Converter(),
+    text      = '# hello, markdown!',
+    html      = converter.makeHtml(text);
 
 
 const sendChat = () => {
@@ -21,6 +24,7 @@ const sendChat = () => {
     console.log("sent: "+ userdata.username, userdata.content)
     ws.send("chat," + userdata.username+ ","+ userdata.content);
     document.querySelector('#textarea').value = "";
+    insertMessage(userdata.content)
 }
 
 
@@ -30,14 +34,12 @@ const sendChat = () => {
  * @param {Message that will be displayed in the UI} messageObj
  */
 function insertMessage(input) {
-    const messageObj = JSON.parse(input)
 	// Create a div object which will hold the message
 	const message = document.createElement('div')
 
 	// Set the attribute of the message div
 	message.setAttribute('class', 'chat-message')
-	console.log("name: " +messageObj.username + " content: " + messageObj.content)
-	message.textContent = `${messageObj.username}: ${messageObj.content}`
+	message.textContent = input
 
 	// Append the message to our chat div
 	document.querySelector('#messages').appendChild(message)
@@ -52,8 +54,7 @@ ws.onmessage = function (msg) {
     insertMessage(msg.data)
 };
 
-
-const start = () => {
+const startRoadmap = () => {
     let userdata = {
         username: document.querySelector('#username').value,
         YearsOfCommercialExperience: document.querySelector('#YearsOfCommercialExperience').value,
@@ -61,31 +62,13 @@ const start = () => {
         DesiredPosition: document.querySelector('#DesiredPosition').value,
         stack: document.querySelector('#stack').value
     }
-
-    let errValidateMsg = "Please, enter valid "
-    let arrValidate = []
-
-    if (userdata.username == "") {
-        arrValidate.push("name")
-    }
-    if (userdata.YearsOfCommercialExperience == "") {
-        arrValidate.push("years of commercial experience")
-    }
-    if (userdata.CurrentPosition == "") {
-        arrValidate.push("current position")
-    }
-    if (userdata.stack == "") {
-        arrValidate.push("background experience")
-    }
-    if (userdata.DesiredPosition == "") {
-        arrValidate.push("desired position")
-    }
-    if (arrValidate.length > 0) {
-        errValidateMsg += arrValidate.join(", ")
-        alert(errValidateMsg)
+    
+    let err = validateUser(userdata)
+    if (err != "") {
+        alert(err)
         return
     }
-    console.log("starting chat for", userdata);
+
     const intro = document.querySelector('.intro')
     intro.classList.toggle("thin")
     
@@ -95,7 +78,36 @@ const start = () => {
     document.querySelectorAll(".filler").forEach(e => {e.classList.toggle("thin")})
 
     
-    ws.send(userdata.username + "," + userdata.YearsOfCommercialExperience + "," + userdata.CurrentPosition + "," + userdata.DesiredPosition + "," + userdata.stack  )
+    ws.send("start,"+ userdata.username + "," + userdata.YearsOfCommercialExperience + "," + userdata.CurrentPosition + "," + userdata.DesiredPosition + "," + userdata.stack  )
+
+}
+
+
+const startInterview = () => {
+    let userdata = {
+        username: document.querySelector('#username').value,
+        YearsOfCommercialExperience: document.querySelector('#YearsOfCommercialExperience').value,
+        CurrentPosition: document.querySelector('#CurrentPosition').value,
+        DesiredPosition: document.querySelector('#DesiredPosition').value,
+        stack: document.querySelector('#stack').value
+    }
+    let err = validateUser(userdata)
+    if (err != "") {
+        alert(err)
+        return
+    }
+
+    const intro = document.querySelector('.intro')
+    intro.classList.toggle("thin")
+    
+    const chat = document.querySelector('.chat')
+    chat.classList.toggle("thin")
+
+    document.querySelectorAll(".filler").forEach(e => {e.classList.toggle("thin")})
+
+    
+    ws.send("start,"+ userdata.username + "," + userdata.YearsOfCommercialExperience + "," + userdata.CurrentPosition + "," + userdata.DesiredPosition + "," + userdata.stack  )
+    console.log("starting chat for", userdata);
 }
 
 document.querySelector("body").innerHTML+= "<hr>js loaded";
@@ -114,4 +126,30 @@ const fillForm = (name) => {
         document.querySelector('#DesiredPosition').value = 'Senior'
         document.querySelector('#stack').value = 'iOS'
     }
+}
+
+const validateUser = (userdata) => {
+    let errValidateMsg = "Please, enter "
+    let arrValidate = []
+
+    if (userdata.username == "") {
+        arrValidate.push("name")
+    }
+    if (userdata.YearsOfCommercialExperience == "") {
+        arrValidate.push("years of commercial experience")
+    }
+    if (userdata.CurrentPosition == "") {
+        arrValidate.push("current position")
+    }
+    if (userdata.DesiredPosition == "") {
+        arrValidate.push("desired position")
+    }
+    if (userdata.stack == "") {
+        arrValidate.push("background experience")
+    }
+    if (arrValidate.length > 0) {
+        errValidateMsg += arrValidate.join(", ")
+        return errValidateMsg
+    }
+    return ""
 }

@@ -12,7 +12,7 @@ help:
 # DEVELOPMENT
 # ==================================================================================== #
 
-## dev: run in development mode
-.PHONY: dev
-dev:
+## run: run in development mode
+.PHONY: run
+run:
 	@go run ./cmd

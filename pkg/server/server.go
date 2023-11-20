@@ -1,9 +1,10 @@
-package main
+package server
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,11 +12,11 @@ import (
 	"time"
 )
 
-func serve() error {
-
+// uses standard logger
+func Serve(port string, handler http.Handler) error {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", port),
-		Handler:      routes(),
+		Handler:      handler,
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
@@ -36,7 +37,7 @@ func serve() error {
 		// Read the signal from the quit channel.
 		// This code will block until a signal is received.
 		s := <-quit
-		logINFO.Println("caught signal", s.String())
+		log.Println("caught signal", s.String())
 
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
@@ -51,7 +52,8 @@ func serve() error {
 			shutdownError <- err
 		}
 
-		logINFO.Println("completing background tasks on address", srv.Addr)
+		// TODO: handle graceful shutdown
+		log.Println("completing background tasks on address", srv.Addr)
 
 		// Call Wait() to block until our WaitGroup counter is zero --- essentially
 		// blocking until the background goroutines have finished. Then we return nil on
@@ -62,7 +64,7 @@ func serve() error {
 
 	}()
 
-	logINFO.Println("starting server on ", srv.Addr)
+	log.Println("starting server on ", srv.Addr)
 
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
@@ -76,6 +78,6 @@ func serve() error {
 		return err
 	}
 
-	logINFO.Println("stopped server on ", srv.Addr)
+	log.Println("stopped server on ", srv.Addr)
 	return nil
 }
