@@ -15,10 +15,12 @@ import (
 
 func PromptGPT(client *http.Client, cfg *config.Config, userdata *models.User) (*models.GptResponse, error) {
 	gptRequest := &models.GptRequest{
-		Model:       "gpt-4",
+		Model:       cfg.GptModel,
 		Messages:    userdata.Messages,
 		Temperature: 0.2,
+		MaxTokens:   cfg.GptMaxTokens,
 	}
+
 	return SendRequest(client, gptRequest, cfg)
 }
 

@@ -37,30 +37,24 @@ func (h *Handler) StartChat(userdata *models.User, s *melody.Session) {
 	s.Set("user", userdata)
 }
 
-func (h *Handler) Chat(s *melody.Session, r *models.UserResponse) {
+func (h *Handler) Chat(s *melody.Session, r string) {
 	userdataIn, ok := s.Keys["user"]
 	if !ok {
 		s.Write([]byte("AI: " + "couldn't retrieve userdata history from web socket session"))
 		return
 	}
-	userdata := userdataIn.(models.User)
-	if userdata.Username != r.Username {
-		s.Write([]byte("AI: " + "Wait... Who are you?"))
-		return
-	}
+	userdata := userdataIn.(*models.User)
 	userdata.Messages = append(userdata.Messages, models.Message{
 		Role:    "user",
-		Content: r.Content,
+		Content: r,
 	})
-	gptRes, err := api.PromptGPT(h.Client, h.Cfg, &userdata)
+
+	gptRes, err := api.PromptGPT(h.Client, h.Cfg, userdata)
 	if err != nil {
 		s.Write([]byte("AI: " + "Couldn't prompt api"))
 		return
 	}
-	s.Set("user", append(userdata.Messages, models.Message{
-		Role:    "user",
-		Content: r.Content,
-	}))
+	s.Set("user", userdata)
 	s.Write([]byte("AI: " + gptRes.Choices[0].Message.Content))
 }
 
@@ -95,10 +89,7 @@ func (h *Handler) HandleMessage(s *melody.Session, msg []byte) {
 	wsdata = wsdata[1:]
 	switch typeOfMessage {
 	case "chat":
-		r := &models.UserResponse{}
-		r.Username = wsdata[0]
-		r.Content = wsdata[1]
-		h.Chat(s, r)
+		h.Chat(s, wsdata[0])
 	case "start":
 		userdata := &models.User{
 			Username:                    wsdata[0],
@@ -115,10 +106,12 @@ func (h *Handler) HandleMessage(s *melody.Session, msg []byte) {
 			{
 				Role: "user",
 				Content: fmt.Sprintf(`I need you to act like a technical interviwer for 
-				%s %s that has %s years of commercial exprerience. 
+				%s that has %s years of commercial exprerience with  background described as: %s. 
 				Stimulate a real-life interview skipping the introductory part focusing only on verifying technical skills. 
+				Ask next question only after I provide you with answer to current question.
+				If my answers are even remotely incorrect, then provide me with correct answer with short explanation and keywords for this topic for quick googling.
 				Start right now.",
-				`, "Senior", "Golang Developer"),
+				`, userdata.CurrentPosition, userdata.YearsOfCommercialExperience, userdata.Stack),
 			},
 		}
 		h.StartChat(userdata, s)

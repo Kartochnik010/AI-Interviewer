@@ -30,6 +30,7 @@ type GptRequest struct {
 	Model       string    `json:"model"`
 	Messages    []Message `json:"messages"`
 	Temperature float64   `json:"temperature"`
+	MaxTokens   int       `json:"max_tokens,omitempty"`
 }
 type Message struct {
 	Role    string `json:"role"`

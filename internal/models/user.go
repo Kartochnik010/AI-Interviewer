@@ -12,15 +12,12 @@ import (
 
 type User struct {
 	Username                    string
+	JobtTitle                   string
 	YearsOfCommercialExperience string
 	CurrentPosition             string
 	DesiredPosition             string
 	Stack                       string
 	Messages                    []Message
-}
-type UserResponse struct {
-	Username string
-	Content  string
 }
 
 type UserModel struct {
