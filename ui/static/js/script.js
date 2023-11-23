@@ -24,7 +24,7 @@ const sendChat = () => {
     console.log("sent: "+ userdata.username, userdata.content)
     ws.send("chat," + userdata.username+ ","+ userdata.content);
     document.querySelector('#textarea').value = "";
-    insertMessage(userdata.content)
+    insertMessage(document.querySelector('#username').value+": "+userdata.content)
 }
 
 
@@ -35,11 +35,11 @@ const sendChat = () => {
  */
 function insertMessage(input) {
 	// Create a div object which will hold the message
-	const message = document.createElement('div')
+	const message = document.createElement('p')
 
 	// Set the attribute of the message div
 	message.setAttribute('class', 'chat-message')
-	message.textContent = input
+	message.innerHTML = input.replace('\n', '<br>')
 
 	// Append the message to our chat div
 	document.querySelector('#messages').appendChild(message)
@@ -117,7 +117,7 @@ const fillForm = (name) => {
         document.querySelector('#YearsOfCommercialExperience').value = '1'
         document.querySelector('#CurrentPosition').value = 'Junior'
         document.querySelector('#DesiredPosition').value = 'Strong Junior'
-        document.querySelector('#stack').value = 'Golang'
+        document.querySelector('#stack').value = 'Java'
     }
     if (name == 'eldana') {
         document.querySelector('#username').value = 'Karen'

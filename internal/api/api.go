@@ -21,6 +21,8 @@ func PromptGPT(client *http.Client, cfg *config.Config, userdata *models.User) (
 		MaxTokens:   cfg.GptMaxTokens,
 	}
 
+	log.Println("Messages:", userdata.Messages[len(userdata.Messages)-1])
+
 	return SendRequest(client, gptRequest, cfg)
 }
 
@@ -33,6 +35,7 @@ func SendRequest(client *http.Client, gptRequest *models.GptRequest, cfg *config
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("request: ", string(b))
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", strings.Trim(cfg.GptToken, "\"")))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -47,7 +50,7 @@ func SendRequest(client *http.Client, gptRequest *models.GptRequest, cfg *config
 
 	body, _ := io.ReadAll(resp.Body)
 
-	log.Println("responce body:" + string(body))
+	// log.Println("responce body:" + string(body))
 	if resp.Status != "200 OK" {
 		return nil, errors.New(resp.Status)
 	}

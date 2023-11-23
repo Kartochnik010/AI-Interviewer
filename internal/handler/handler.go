@@ -33,8 +33,15 @@ func (h *Handler) StartChat(userdata *models.User, s *melody.Session) {
 		s.Write([]byte("AI: Sorry, I am not availabe at the moment. Please, try again later..."))
 		return
 	}
-	s.Write([]byte("AI: " + gptRes.Choices[len(gptRes.Choices)-1].Message.Content))
+	gptResContent := gptRes.Choices[len(gptRes.Choices)-1].Message.Content
+
+	userdata.Messages = append(userdata.Messages, models.Message{
+		Content: gptResContent,
+		Role:    "assistant",
+	})
 	s.Set("user", userdata)
+
+	s.Write([]byte("AI: " + gptResContent))
 }
 
 func (h *Handler) Chat(s *melody.Session, r string) {
@@ -54,6 +61,12 @@ func (h *Handler) Chat(s *melody.Session, r string) {
 		s.Write([]byte("AI: " + "Couldn't prompt api"))
 		return
 	}
+	gptResContent := gptRes.Choices[len(gptRes.Choices)-1].Message.Content
+
+	userdata.Messages = append(userdata.Messages, models.Message{
+		Content: gptResContent,
+		Role:    "assistant",
+	})
 	s.Set("user", userdata)
 	s.Write([]byte("AI: " + gptRes.Choices[0].Message.Content))
 }
@@ -64,9 +77,12 @@ func (h *Handler) HandleClose(s *melody.Session, i int, ss string) error {
 		s.Write([]byte("Couldn't get user from ws context"))
 		return s.Close()
 	}
-	userdata := u.(*models.User)
-	s.Write([]byte("Closing chat with:" + userdata.Username))
-	log.Println("Closing chat with: " + userdata.Username)
+	userdata, ok := u.(*models.User)
+	if !ok {
+		s.Write([]byte("Closing chat with:" + s.Request.Host))
+	} else {
+		log.Println("Closing chat with: " + userdata.Username)
+	}
 	return s.Close()
 }
 
@@ -84,12 +100,13 @@ func (h *Handler) HandleDisconnect(s *melody.Session) {
 func (h *Handler) HandleMessage(s *melody.Session, msg []byte) {
 	m := string(msg)
 	wsdata := strings.Split(m, ",")
-	log.Println("Got:", m)
+	// log.Println("Got:", m)
 	typeOfMessage := wsdata[0]
 	wsdata = wsdata[1:]
 	switch typeOfMessage {
 	case "chat":
-		h.Chat(s, wsdata[0])
+		log.Println("chating: ", wsdata[1])
+		h.Chat(s, wsdata[1])
 	case "start":
 		userdata := &models.User{
 			Username:                    wsdata[0],
@@ -105,13 +122,14 @@ func (h *Handler) HandleMessage(s *melody.Session, msg []byte) {
 			},
 			{
 				Role: "user",
-				Content: fmt.Sprintf(`I need you to act like a technical interviwer for 
-				%s that has %s years of commercial exprerience with  background described as: %s. 
-				Stimulate a real-life interview skipping the introductory part focusing only on verifying technical skills. 
-				Ask next question only after I provide you with answer to current question.
-				If my answers are even remotely incorrect, then provide me with correct answer with short explanation and keywords for this topic for quick googling.
-				Start right now.",
-				`, userdata.CurrentPosition, userdata.YearsOfCommercialExperience, userdata.Stack),
+				Content: fmt.Sprintf(`
+I need you to act like a technical interviwer for 
+%s that has %s years of commercial exprerience with  background described as: %s. 
+Stimulate a real-life interview skipping the introductory part focusing only on verifying technical skills. 
+Ask next question only after I provide you with answer to current question.
+If my answers are even remotely incorrect, then provide me with correct answer with short explanation and keywords for this topic for quick googling.
+After clarification as next question. 
+Start right now.`, userdata.CurrentPosition, userdata.YearsOfCommercialExperience, userdata.Stack),
 			},
 		}
 		h.StartChat(userdata, s)
