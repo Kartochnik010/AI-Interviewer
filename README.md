@@ -5,7 +5,13 @@
 
 Cайт попросит вас ввести информацию о вашем текущем опыте, о вашей желаемой должности. Далее начнется процесс интервью для работника на этой должности будь то Пилот гражданского самолета или разработчика ПО. 
 
+## Requirements
+
+- Go version 1.15
+
 ## Usage
+
+
 
 1. Клонируйте репозиторий:
 ```Bash
@@ -95,8 +101,8 @@ Cайт попросит вас ввести информацию о вашем 
 
 ### Contribute to project
 ## Todos
-- Add storage for roadmap's
-- Add storage for best conversations
-- Export conversation
-- Publish conversation on the web
-- 3rd party logger?
+- [ ] Add storage for roadmap's
+- [ ] Add storage for best conversations
+- [ ] Export conversation
+- [ ] Publish conversation on the web
+- [ ] 3rd party logger?
